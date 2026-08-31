@@ -59,8 +59,16 @@ def load_config(path: Path) -> dict:
     conversion = config.get("conversion", {})
     horizontal_margin_ratio = float(conversion.get("image_horizontal_margin_ratio", 0.04))
     vertical_margin_ratio = float(conversion.get("image_vertical_margin_ratio", 0.08))
-    if not 0 <= horizontal_margin_ratio < 0.5 or not 0 <= vertical_margin_ratio < 0.5:
-        raise RuntimeError("图片边距比例必须分别在 0 到 0.5 之间")
+    margin_values = {
+        "left": float(conversion.get("image_left_margin_ratio", horizontal_margin_ratio)),
+        "right": float(conversion.get("image_right_margin_ratio", horizontal_margin_ratio)),
+        "top": float(conversion.get("image_top_margin_ratio", vertical_margin_ratio)),
+        "bottom": float(conversion.get("image_bottom_margin_ratio", vertical_margin_ratio)),
+    }
+    if any(not 0 <= value < 0.5 for value in margin_values.values()):
+        raise RuntimeError("图片四边边距比例必须分别在 0 到 0.5 之间")
+    if margin_values["left"] + margin_values["right"] >= 1 or margin_values["top"] + margin_values["bottom"] >= 1:
+        raise RuntimeError("图片左右或上下边距之和必须小于 1")
     if str(conversion.get("image_interpolation", "cubic")).lower() != "cubic":
         raise RuntimeError("conversion.image_interpolation 当前仅支持 cubic")
     calibration_marks = conversion.get("calibration_marks_mm", [0, 5, 10, 15, 20])
@@ -265,10 +273,13 @@ def image_to_pdf(source: Path, output: Path, orientation: str = "portrait") -> N
     page_width, page_height = A4
     if orientation == "landscape":
         page_width, page_height = page_height, page_width
-    horizontal_margin_ratio = float(CONFIG["conversion"].get("image_horizontal_margin_ratio", 0.04))
-    vertical_margin_ratio = float(CONFIG["conversion"].get("image_vertical_margin_ratio", 0.08))
-    if not 0 <= horizontal_margin_ratio < 0.5 or not 0 <= vertical_margin_ratio < 0.5:
-        raise RuntimeError("图片边距比例必须分别在 0 到 0.5 之间")
+    conversion = CONFIG["conversion"]
+    horizontal_margin_ratio = float(conversion.get("image_horizontal_margin_ratio", 0.04))
+    vertical_margin_ratio = float(conversion.get("image_vertical_margin_ratio", 0.08))
+    left_ratio = float(conversion.get("image_left_margin_ratio", horizontal_margin_ratio))
+    right_ratio = float(conversion.get("image_right_margin_ratio", horizontal_margin_ratio))
+    top_ratio = float(conversion.get("image_top_margin_ratio", vertical_margin_ratio))
+    bottom_ratio = float(conversion.get("image_bottom_margin_ratio", vertical_margin_ratio))
     interpolation_name = str(CONFIG["conversion"].get("image_interpolation", "cubic")).lower()
     interpolations = {"cubic": cv2.INTER_CUBIC}
     if interpolation_name not in interpolations:
@@ -276,10 +287,10 @@ def image_to_pdf(source: Path, output: Path, orientation: str = "portrait") -> N
     dpi = float(CONFIG["conversion"].get("pdf_dpi", 300))
     if dpi <= 0:
         raise RuntimeError("图片输出 DPI 必须大于 0")
-    left = page_width * horizontal_margin_ratio
-    right = left
-    bottom = page_height * vertical_margin_ratio
-    top = bottom
+    left = page_width * left_ratio
+    right = page_width * right_ratio
+    bottom = page_height * bottom_ratio
+    top = page_height * top_ratio
     content_width = page_width - left - right
     content_height = page_height - top - bottom
     target_width_px = max(1, round(content_width / 72 * dpi))

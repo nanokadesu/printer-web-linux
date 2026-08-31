@@ -46,6 +46,10 @@ conversion:
   text_margins_mm: [25.4, 25.4, 25.4, 25.4]
   image_horizontal_margin_ratio: 0.02
   image_vertical_margin_ratio: 0.04
+  image_left_margin_ratio: 0.02
+  image_right_margin_ratio: 0.02
+  image_top_margin_ratio: 0.04
+  image_bottom_margin_ratio: 0.04
   image_interpolation: cubic
   calibration_marks_mm: [0, 5, 10, 15, 20]
 

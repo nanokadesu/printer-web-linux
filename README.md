@@ -182,8 +182,10 @@ Windows 的 C# 程序、PowerShell、批处理自定义打印接口已经移除�
 
 ```yaml
 conversion:
-  image_horizontal_margin_ratio: 0.02
-  image_vertical_margin_ratio: 0.04
+  image_left_margin_ratio: 0.02
+  image_right_margin_ratio: 0.02
+  image_top_margin_ratio: 0.04
+  image_bottom_margin_ratio: 0.04
 ```
 
-横向比例使用测量毫米数除以 A4 宽度（210 mm），纵向比例使用测量毫米数除以 A4 高度（297 mm）。修改配置后重启 `printer-backend.service`；校准页本身不会自动修改配置，也不会绕过队列中的其他任务。
+左、右比例使用对应测量毫米数除以 A4 宽度（210 mm），上、下比例使用对应测量毫米数除以 A4 高度（297 mm）。旧的 `image_horizontal_margin_ratio` / `image_vertical_margin_ratio` 仍可作为四边配置缺省值。修改配置后重启 `printer-backend.service`；校准页本身不会自动修改配置，也不会绕过队列中的其他任务。
