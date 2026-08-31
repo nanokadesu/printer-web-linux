@@ -13,7 +13,7 @@ auth:
   users:
     # Change this bootstrap password before exposing the service.
     - username: admin
-      password: 12345678n
+      password: admin
 
 cups:
   poll_seconds: 1
