@@ -1,0 +1,14 @@
+[Unit]
+Description=GreenPrint Vue frontend
+After=network-online.target printer-backend.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/orangepi/Code/Printer/Vue
+ExecStart=/root/.nvm/versions/node/v22.23.2/bin/node /home/orangepi/Code/Printer/Vue/node_modules/vite/bin/vite.js --host 0.0.0.0 --port 5173
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

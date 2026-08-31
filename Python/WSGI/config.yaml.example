@@ -1,0 +1,43 @@
+server:
+  host: 0.0.0.0
+  port: 5181
+  frontend_port: 5173
+ip_list: [192.168.15.221, 10.144.144.75]
+auth:
+  enabled: true
+  users:
+    - username: admin
+      password: change-me
+cups:
+  poll_seconds: 1
+  job_timeout_seconds: 3600
+  color_options:
+    option: ColorModel
+    values:
+      color: RGB
+      monochrome: KGray
+  default_options:
+    media: A4
+    media_type: Plain
+    quality: Normal
+  printers:
+    - id: 1
+      cups_name: HP_DeskJet_1200_series
+      location: NanokaPrinter01
+      type: CUPS
+storage:
+  upload_dir: /home/orangepi/Code/Printer/Queue/uploads
+  queue_dir: /home/orangepi/Code/Printer/Queue
+  retain_completed: true
+conversion:
+  pdf_dpi: 300
+  pdf_mode: auto
+  pdf_engine: xelatex
+  font_path: /usr/share/fonts/truetype/wqy/wqy-zenhei.ttc
+  text_margins_mm: [25.4, 25.4, 25.4, 25.4]
+  image_horizontal_margin_ratio: 0.02
+  image_vertical_margin_ratio: 0.04
+  image_interpolation: cubic
+  calibration_marks_mm: [0, 5, 10, 15, 20]
+logging:
+  level: INFO
